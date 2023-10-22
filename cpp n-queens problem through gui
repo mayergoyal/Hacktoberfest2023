@@ -1,0 +1,63 @@
+#include <QMainWindow>
+#include <QLabel>
+#include <QPushButton>
+#include <QGridLayout>
+#include <QCoreApplication>
+#include <vector>
+#include "nqueenssolver.h" // This is where your N-Queens solver code resides
+
+class MainWindow : public QMainWindow {
+    Q_OBJECT
+
+public:
+    MainWindow(QWidget *parent = nullptr) : QMainWindow(parent) {
+        setWindowTitle("N-Queens Solver");
+        
+        QPushButton *solveButton = new QPushButton("Solve");
+        label = new QLabel("Board will be displayed here.");
+        
+        QGridLayout *layout = new QGridLayout;
+        layout->addWidget(solveButton, 0, 0);
+        layout->addWidget(label, 1, 0);
+        
+        QWidget *centralWidget = new QWidget;
+        centralWidget->setLayout(layout);
+        setCentralWidget(centralWidget);
+        
+        connect(solveButton, &QPushButton::clicked, this, &MainWindow::solveNQueens);
+    }
+
+private slots:
+    void solveNQueens() {
+        // Create and initialize your N-Queens solver object (or call your existing solver).
+        NQueensSolver solver;
+        
+        // Call your solver and get the solution as a 2D vector of integers.
+        std::vector<std::vector<int>> solution = solver.solveNQueens(N);
+        
+        // Display the solution on the label as a text representation.
+        QString boardText;
+        for (const auto &row : solution) {
+            for (int cell : row) {
+                if (cell == 1) {
+                    boardText += "Q ";
+                } else {
+                    boardText += ". ";
+                }
+            }
+            boardText += "\n";
+        }
+        label->setText(boardText);
+    }
+
+private:
+    QLabel *label;
+    const int N = 8; // Set your desired board size here
+};
+
+int main(int argc, char *argv[]) {
+    QCoreApplication a(argc, argv);
+    MainWindow w;
+    w.show();
+    return a.exec();
+}
